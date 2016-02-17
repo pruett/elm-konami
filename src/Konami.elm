@@ -54,7 +54,7 @@ update action model  =
           countDown = model.countDown - 1 }
       else
         { model |
-          sequence = [], countDown = 3 }
+          sequence = [], countDown = countDownClock }
 
     NoOp ->
       model
