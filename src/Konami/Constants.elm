@@ -1,12 +1,14 @@
-module Konami.Constants where
+module Konami.Constants (..) where
+
 
 countDownClock : Int
 countDownClock =
   3
 
+
 konamiCode : List String
 konamiCode =
-  ["B"
+  [ "B"
   , "Right"
   , "Left"
   , "Right"

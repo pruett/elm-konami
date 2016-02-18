@@ -1,7 +1,8 @@
-module Konami.Keyboard where
+module Konami.Keyboard (..) where
 
 import Char
 import Keyboard
+
 
 characters : Signal Char
 characters =

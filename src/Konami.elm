@@ -1,9 +1,8 @@
-module Konami where
+module Konami (..) where
 
 import Konami.Arrow exposing (Arrow, direction)
 import Konami.Keyboard exposing (characters)
 import Konami.Constants as Constants
-
 import Html
 import Graphics.Element as Element
 import String
@@ -11,7 +10,9 @@ import Keyboard
 import Char
 import Time
 
+
 -- ACTIONS
+
 
 type Action
   = ArrowPress String
@@ -20,7 +21,10 @@ type Action
   | Tick
   | NoOp
 
+
+
 -- MODEL
+
 
 type alias Model =
   { sequence : List String
@@ -28,19 +32,24 @@ type alias Model =
   , correct : Bool
   }
 
+
 initialModel : Model
 initialModel =
   Model [] Constants.countDownClock False
 
+
+
 -- UPDATE
 
+
 update : Action -> Model -> Model
-update action model  =
+update action model =
   case action of
     ArrowPress direction ->
-      { model |
-        sequence = List.append model.sequence [direction],
-        countDown = Constants.countDownClock }
+      { model
+        | sequence = List.append model.sequence [ direction ]
+        , countDown = Constants.countDownClock
+      }
 
     KeyPress character ->
       let
@@ -49,9 +58,10 @@ update action model  =
             |> String.fromChar
             |> String.toUpper
       in
-        { model |
-          sequence = List.append model.sequence [str],
-          countDown = Constants.countDownClock }
+        { model
+          | sequence = List.append model.sequence [ str ]
+          , countDown = Constants.countDownClock
+        }
 
     CheckSequence ->
       let
@@ -61,28 +71,35 @@ update action model  =
             |> List.take 9
       in
         if currentSequence == Constants.konamiCode then
-          { model |
-            sequence = [],
-            countDown = Constants.countDownClock,
-            correct = True }
+          { model
+            | sequence = []
+            , countDown = Constants.countDownClock
+            , correct = True
+          }
         else
-          { model |
-            sequence = List.append model.sequence ["A"],
-            countDown = Constants.countDownClock }
+          { model
+            | sequence = List.append model.sequence [ "A" ]
+            , countDown = Constants.countDownClock
+          }
 
     Tick ->
       if model.countDown - 1 > 0 then
-        { model |
-          countDown = model.countDown - 1 }
+        { model
+          | countDown = model.countDown - 1
+        }
       else
-        { model |
-          sequence = [], countDown = Constants.countDownClock }
+        { model
+          | sequence = []
+          , countDown = Constants.countDownClock
+        }
 
     NoOp ->
       model
 
 
+
 -- SIGNALS
+
 
 handleKeypress : Char -> Action
 handleKeypress char =
@@ -91,34 +108,44 @@ handleKeypress char =
   else
     KeyPress char
 
+
 keyboardSignal : Signal Action
 keyboardSignal =
   Signal.map handleKeypress characters
 
+
 arrowSignal : Signal Action
 arrowSignal =
   let
-    sgnl = Signal.filterMap direction "" Keyboard.arrows
+    sgnl =
+      Signal.filterMap direction "" Keyboard.arrows
   in
     Signal.map (\str -> ArrowPress str) sgnl
+
 
 countdownSignal : Signal Action
 countdownSignal =
   Signal.map (\_ -> Tick) (Time.fps 1)
 
+
 actionSignals : Signal Action
 actionSignals =
-  Signal.mergeMany [keyboardSignal, arrowSignal, countdownSignal]
+  Signal.mergeMany [ keyboardSignal, arrowSignal, countdownSignal ]
+
 
 modelSignal : Signal Model
 modelSignal =
   Signal.foldp update initialModel actionSignals
 
+
+
 -- VIEW
+
 
 view : Model -> Element.Element
 view model =
   Element.show model
+
 
 main : Signal Element.Element
 main =
