@@ -2,6 +2,7 @@ module Konami where
 
 import Konami.Arrow exposing (Arrow, direction)
 import Konami.Keyboard exposing (characters)
+import Konami.Constants as Constants
 
 import Html
 import Graphics.Element as Element
@@ -27,26 +28,9 @@ type alias Model =
   , correct : Bool
   }
 
-countDownClock : Int
-countDownClock =
-  3
-
-konamiCode : List String
-konamiCode =
-  ["B"
-  , "Right"
-  , "Left"
-  , "Right"
-  , "Left"
-  , "Down"
-  , "Down"
-  , "Up"
-  , "Up"
-  ]
-
 initialModel : Model
 initialModel =
-  Model [] countDownClock False
+  Model [] Constants.countDownClock False
 
 -- UPDATE
 
@@ -56,7 +40,7 @@ update action model  =
     ArrowPress direction ->
       { model |
         sequence = List.append model.sequence [direction],
-        countDown = countDownClock }
+        countDown = Constants.countDownClock }
 
     KeyPress character ->
       let
@@ -67,7 +51,7 @@ update action model  =
       in
         { model |
           sequence = List.append model.sequence [str],
-          countDown = countDownClock }
+          countDown = Constants.countDownClock }
 
     CheckSequence ->
       let
@@ -76,15 +60,15 @@ update action model  =
             |> List.reverse
             |> List.take 9
       in
-        if currentSequence == konamiCode then
+        if currentSequence == Constants.konamiCode then
           { model |
             sequence = [],
-            countDown = countDownClock,
+            countDown = Constants.countDownClock,
             correct = True }
         else
           { model |
             sequence = List.append model.sequence ["A"],
-            countDown = countDownClock }
+            countDown = Constants.countDownClock }
 
     Tick ->
       if model.countDown - 1 > 0 then
@@ -92,7 +76,7 @@ update action model  =
           countDown = model.countDown - 1 }
       else
         { model |
-          sequence = [], countDown = countDownClock }
+          sequence = [], countDown = Constants.countDownClock }
 
     NoOp ->
       model
