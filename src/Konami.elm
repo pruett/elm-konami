@@ -15,6 +15,7 @@ import Time
 type Action
   = ArrowPress String
   | KeyPress Char
+  | CheckSequence
   | Tick
   | NoOp
 
@@ -23,15 +24,29 @@ type Action
 type alias Model =
   { sequence : List String
   , countDown : Int
+  , correct : Bool
   }
 
 countDownClock : Int
 countDownClock =
   3
 
+konamiCode : List String
+konamiCode =
+  ["B"
+  , "Right"
+  , "Left"
+  , "Right"
+  , "Left"
+  , "Down"
+  , "Down"
+  , "Up"
+  , "Up"
+  ]
+
 initialModel : Model
 initialModel =
-  Model [] countDownClock
+  Model [] countDownClock False
 
 -- UPDATE
 
@@ -44,9 +59,32 @@ update action model  =
         countDown = countDownClock }
 
     KeyPress character ->
-      { model |
-        sequence = List.append model.sequence [String.fromChar character],
-        countDown = countDownClock }
+      let
+        str =
+          character
+            |> String.fromChar
+            |> String.toUpper
+      in
+        { model |
+          sequence = List.append model.sequence [str],
+          countDown = countDownClock }
+
+    CheckSequence ->
+      let
+        currentSequence =
+          model.sequence
+            |> List.reverse
+            |> List.take 9
+      in
+        if currentSequence == konamiCode then
+          { model |
+            sequence = [],
+            countDown = countDownClock,
+            correct = True }
+        else
+          { model |
+            sequence = List.append model.sequence ["A"],
+            countDown = countDownClock }
 
     Tick ->
       if model.countDown - 1 > 0 then
@@ -59,11 +97,19 @@ update action model  =
     NoOp ->
       model
 
+
 -- SIGNALS
+
+handleKeypress : Char -> Action
+handleKeypress char =
+  if Char.toUpper char == 'A' then
+    CheckSequence
+  else
+    KeyPress char
 
 keyboardSignal : Signal Action
 keyboardSignal =
-  Signal.map (\char -> KeyPress char) characters
+  Signal.map handleKeypress characters
 
 arrowSignal : Signal Action
 arrowSignal =
