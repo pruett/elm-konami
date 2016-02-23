@@ -1,12 +1,11 @@
 module Konami (..) where
 
-import Konami.Arrow exposing (Arrow, direction)
+import Konami.Arrow exposing (Arrow, getDirection)
 import Konami.Keyboard exposing (characters)
 import Konami.Constants as Constants
 import Html
 import Graphics.Element as Element
 import String
-import Keyboard
 import Char
 import Time
 
@@ -116,26 +115,22 @@ keyboardSignal =
 
 arrowSignal : Signal Action
 arrowSignal =
-  let
-    sgnl =
-      Signal.filterMap direction "" Keyboard.arrows
-  in
-    Signal.map (\str -> ArrowPress str) sgnl
+  Signal.map ArrowPress getDirection
 
 
 countdownSignal : Signal Action
 countdownSignal =
-  Signal.map (\_ -> Tick) (Time.fps 1)
+  Signal.map (always Tick) (Time.every Time.second)
 
 
-actionSignals : Signal Action
-actionSignals =
+input : Signal Action
+input =
   Signal.mergeMany [ keyboardSignal, arrowSignal, countdownSignal ]
 
 
 modelSignal : Signal Model
 modelSignal =
-  Signal.foldp update initialModel actionSignals
+  Signal.foldp update initialModel input
 
 
 

@@ -1,4 +1,5 @@
-module Konami.Arrow (..) where
+module Konami.Arrow (Arrow, getDirection) where
+import Keyboard
 
 
 type alias Arrow =
@@ -7,8 +8,8 @@ type alias Arrow =
   }
 
 
-direction : Arrow -> Maybe String
-direction { x, y } =
+parseDirection : Arrow -> Maybe String
+parseDirection { x, y } =
   case ( x, y ) of
     ( 1, 0 ) ->
       Just "Right"
@@ -24,3 +25,8 @@ direction { x, y } =
 
     _ ->
       Nothing
+
+
+getDirection : Signal String
+getDirection =
+  Signal.filterMap parseDirection "" Keyboard.arrows
