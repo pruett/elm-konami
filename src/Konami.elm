@@ -1,6 +1,6 @@
 module Konami (..) where
 
-{-| This fun library allows developers to inject easter eggs into their code that are unlockable by inputting the infamous Konami cheat code sequence. The libary monitors visitors' keystrokes and detects when and if the correct sequence has been entered.
+{-| This fun library allows developers to inject easter eggs into their code that are unlockable through the infamous Konami cheat code sequence. The libary monitors visitors' keystrokes and detects when and if the correct sequence has been entered.
 
 :arrow_up: :arrow_up: :arrow_down: :arrow_down: :arrow_left: :arrow_right: :arrow_left: :arrow_right: :b: :a:
 
